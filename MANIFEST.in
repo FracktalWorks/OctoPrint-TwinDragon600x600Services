@@ -1,0 +1,3 @@
+include README.md
+include versioneer.py
+include octoprint_TwinDragon600x600Services/_version.py
