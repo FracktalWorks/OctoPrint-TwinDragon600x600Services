@@ -35,8 +35,8 @@ class TwinDragon600x600ServicesPlugin(octoprint.plugin.StartupPlugin,
     PIN_DOOR        = 26    37
     '''
 
-    PIN_EXTRUDER0 = 5
-    PIN_EXTRUDER1 = 6
+    #PIN_EXTRUDER0 = 5
+    #PIN_EXTRUDER1 = 6
     PIN_DOOR_SENSOR = 26
     PIN_DOOR_LOCK = 13
 
@@ -75,37 +75,37 @@ class TwinDragon600x600ServicesPlugin(octoprint.plugin.StartupPlugin,
     def sensor_enabled(self):
         return self._settings.get_boolean(["sensor_enabled"])
 
-    @property
-    def enabled_extruder0(self):
-        return self._settings.get_boolean(["enabled_extruder0"])
+    # @property
+    # def enabled_extruder0(self):
+    #     return self._settings.get_boolean(["enabled_extruder0"])
 
-    @property
-    def bounce_extruder0(self):
-        return self._settings.get_int(["bounce_extruder0"])
+    # @property
+    # def bounce_extruder0(self):
+    #     return self._settings.get_int(["bounce_extruder0"])
 
-    @property
-    def contact_extruder0(self):
-        return self._settings.get_int(["contact_extruder0"])
+    # @property
+    # def contact_extruder0(self):
+    #     return self._settings.get_int(["contact_extruder0"])
 
-    @property
-    def gcode_extruder0(self):
-        return self.format_gcode("gcode_extruder0")
+    # @property
+    # def gcode_extruder0(self):
+    #     return self.format_gcode("gcode_extruder0")
 
-    @property
-    def enabled_extruder1(self):
-        return self._settings.get_boolean(["enabled_extruder1"])
+    # @property
+    # def enabled_extruder1(self):
+    #     return self._settings.get_boolean(["enabled_extruder1"])
 
-    @property
-    def bounce_extruder1(self):
-        return self._settings.get_int(["bounce_extruder1"])
+    # @property
+    # def bounce_extruder1(self):
+    #     return self._settings.get_int(["bounce_extruder1"])
 
-    @property
-    def contact_extruder1(self):
-        return self._settings.get_int(["contact_extruder1"])
+    # @property
+    # def contact_extruder1(self):
+    #     return self._settings.get_int(["contact_extruder1"])
 
-    @property
-    def gcode_extruder1(self):
-        return self.format_gcode("gcode_extruder1")
+    # @property
+    # def gcode_extruder1(self):
+    #     return self.format_gcode("gcode_extruder1")
 
     @property
     def enabled_door_sensor(self):
@@ -123,9 +123,9 @@ class TwinDragon600x600ServicesPlugin(octoprint.plugin.StartupPlugin,
     def gcode_door_sensor(self):
         return self.format_gcode("gcode_door_sensor")
 
-    @property
-    def pause_print(self):
-        return self._settings.get_boolean(["pause_print"])
+    # @property
+    # def pause_print(self):
+    #     return self._settings.get_boolean(["pause_print"])
 
     '''
     IPC
@@ -133,22 +133,21 @@ class TwinDragon600x600ServicesPlugin(octoprint.plugin.StartupPlugin,
 
     def get_status(self):
         sensor_enabled = 0
-        extruder0 = -1
-        extruder1 = None if not self.has_extruder1() else -1
+        #extruder0 = -1
+        #extruder1 = None if not self.has_extruder1() else -1
         door_sensor = -1
 
         if self.sensor_enabled:
             sensor_enabled = 1
-            if self.enabled_extruder0:
-                extruder0 = 0 if self.outage_extruder0() else 1
-            if self.has_extruder1() and self.enabled_extruder1:
-                    extruder1 = 0 if self.outage_extruder1() else 1
+            # if self.enabled_extruder0:
+            #     extruder0 = 0 if self.outage_extruder0() else 1
+            # if self.has_extruder1() and self.enabled_extruder1:
+            #         extruder1 = 0 if self.outage_extruder1() else 1
             if self.enabled_door_sensor:
                 door_sensor = 0 if self.outage_door_sensor() else 1
 
-        return dict(sensor_enabled=sensor_enabled, extruder0=extruder0, 
-                    extruder1=extruder1, door_sensor=door_sensor, active_tool=self.active_tool,
-                    pause_print=self.pause_print)
+        return dict(sensor_enabled=sensor_enabled,  door_sensor=door_sensor) 
+                    #pause_print=self.pause_print) extruder0=extruder0, extruder1=extruder1, active_tool=self.active_tool,
 
     def send_status_to_hmi(self):
         self._plugin_manager.send_plugin_message(self._identifier, self.get_status())
@@ -180,8 +179,8 @@ class TwinDragon600x600ServicesPlugin(octoprint.plugin.StartupPlugin,
 
     @octoprint.plugin.BlueprintPlugin.route("/toggle", methods=["GET"])
     def route_set_filament_sensor(self):
-        # self._logger.info(flask.request.values["sensor_enabled"])
-        # state = flask.request.values["sensor_enabled"]
+        #self._logger.info(flask.request.values["sensor_enabled"])
+        #state = flask.request.values["sensor_enabled"]
         x1 = self.sensor_enabled
         self._settings.set_boolean(["sensor_enabled"], not self.sensor_enabled)
         self._settings.save()
@@ -197,24 +196,24 @@ class TwinDragon600x600ServicesPlugin(octoprint.plugin.StartupPlugin,
     # def extruder0_enabled(self):
     #     return self.enabled_extruder0 == 1
 
-    def has_extruder1(self):
-        if not self._printer_profile_manager.get_current():
-            return False
-        return self._printer_profile_manager.get_current().get('extruder').get('count') >= 2
+    # def has_extruder1(self):
+    #     if not self._printer_profile_manager.get_current():
+    #         return False
+    #     return self._printer_profile_manager.get_current().get('extruder').get('count') >= 2
 
-    def outage_extruder0(self):
-        try:
-            return GPIO.input(self.PIN_EXTRUDER0) == self.contact_extruder0
-        except Exception as e:
-            self.popup_error(e)
-            return False
+    # def outage_extruder0(self):
+    #     try:
+    #         return GPIO.input(self.PIN_EXTRUDER0) == self.contact_extruder0
+    #     except Exception as e:
+    #         self.popup_error(e)
+    #         return False
 
-    def outage_extruder1(self):
-        try:
-            return GPIO.input(self.PIN_EXTRUDER1) == self.contact_extruder1
-        except Exception as e:
-            self.popup_error(e)
-            return False
+    # def outage_extruder1(self):
+    #     try:
+    #         return GPIO.input(self.PIN_EXTRUDER1) == self.contact_extruder1
+    #     except Exception as e:
+    #         self.popup_error(e)
+    #         return False
 
     def outage_door_sensor(self):
         try:
@@ -253,8 +252,8 @@ class TwinDragon600x600ServicesPlugin(octoprint.plugin.StartupPlugin,
 
             # self._gpio_pinout(mode)
 
-            self._gpio_clean_pin(self.PIN_EXTRUDER0)
-            self._gpio_clean_pin(self.PIN_EXTRUDER1)
+            #self._gpio_clean_pin(self.PIN_EXTRUDER0)
+            #self._gpio_clean_pin(self.PIN_EXTRUDER1)
             self._gpio_clean_pin(self.PIN_DOOR_SENSOR)
             self._gpio_clean_pin(self.PIN_DOOR_LOCK)
 
@@ -265,27 +264,27 @@ class TwinDragon600x600ServicesPlugin(octoprint.plugin.StartupPlugin,
             GPIO.setup(self.PIN_DOOR_LOCK,GPIO.OUT)
             GPIO.output(self.PIN_DOOR_LOCK,False)
 
-            if self.sensor_enabled and (self.enabled_extruder0 or self.enabled_extruder1 or self.enabled_door_sensor):
-                if self.enabled_extruder0:
-                    self.log_info("Filament Sensor active on Extruder 0, GPIO Pin [%s]" % self.PIN_EXTRUDER0)
-                    GPIO.setup(self.PIN_EXTRUDER0, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-                    GPIO.remove_event_detect(self.PIN_EXTRUDER0)
-                    GPIO.add_event_detect(
-                        self.PIN_EXTRUDER0, GPIO.BOTH,
-                        callback=self.callback_extruder0,
-                        bouncetime=self.bounce_extruder0
-                    )
-                self.log_info("Has extruder 1 [%s]" % self.has_extruder1())
-                self.log_info("self.enabled_extruder1 [%s]" % self.enabled_extruder1)
-                if self.has_extruder1() and self.enabled_extruder1:
-                    self.log_info("Filament Sensor active on Extruder 1, GPIO Pin [%s]" % self.PIN_EXTRUDER1)
-                    GPIO.setup(self.PIN_EXTRUDER1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-                    GPIO.remove_event_detect(self.PIN_EXTRUDER1)
-                    GPIO.add_event_detect(
-                        self.PIN_EXTRUDER1, GPIO.BOTH,
-                        callback=self.callback_extruder1,
-                        bouncetime=self.bounce_extruder1
-                    )
+            if self.sensor_enabled and self.enabled_door_sensor: #self.enabled_extruder0 or self.enabled_extruder1 or 
+                # if self.enabled_extruder0:
+                #     self.log_info("Filament Sensor active on Extruder 0, GPIO Pin [%s]" % self.PIN_EXTRUDER0)
+                #     GPIO.setup(self.PIN_EXTRUDER0, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+                #     GPIO.remove_event_detect(self.PIN_EXTRUDER0)
+                #     GPIO.add_event_detect(
+                #         self.PIN_EXTRUDER0, GPIO.BOTH,
+                #         callback=self.callback_extruder0,
+                #         bouncetime=self.bounce_extruder0
+                #     )
+                # self.log_info("Has extruder 1 [%s]" % self.has_extruder1())
+                # self.log_info("self.enabled_extruder1 [%s]" % self.enabled_extruder1)
+                # if self.has_extruder1() and self.enabled_extruder1:
+                #     self.log_info("Filament Sensor active on Extruder 1, GPIO Pin [%s]" % self.PIN_EXTRUDER1)
+                #     GPIO.setup(self.PIN_EXTRUDER1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+                #     GPIO.remove_event_detect(self.PIN_EXTRUDER1)
+                #     GPIO.add_event_detect(
+                #         self.PIN_EXTRUDER1, GPIO.BOTH,
+                #         callback=self.callback_extruder1,
+                #         bouncetime=self.bounce_extruder1
+                #     )
                 if self.enabled_door_sensor:
                     self.log_info("Door Sensor active, GPIO Pin [%s]" % self.PIN_DOOR_SENSOR)
                     GPIO.setup(self.PIN_DOOR_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -319,18 +318,18 @@ class TwinDragon600x600ServicesPlugin(octoprint.plugin.StartupPlugin,
             if not self.sensor_enabled:
                 return
 
-            if (self.enabled_extruder0 and self.outage_extruder0()) or \
-               (self.has_extruder1() and self.enabled_extruder1 and self.outage_extruder1()) or \
-               (self.enabled_door_sensor and self.outage_door_sensor()):
-                self.send_status_to_hmi()
+            # if (self.enabled_extruder0 and self.outage_extruder0()) or \
+            #    (self.has_extruder1() and self.enabled_extruder1 and self.outage_extruder1()) or \
+            #    (self.enabled_door_sensor and self.outage_door_sensor()):
+            #     self.send_status_to_hmi()
 
-            if (self.enabled_extruder0 and self.outage_extruder0()) or \
-               (self.enabled_door_sensor and self.outage_door_sensor()):
-                self._printer.pause_print()
+            # if (self.enabled_extruder0 and self.outage_extruder0()) or \
+            #    (self.enabled_door_sensor and self.outage_door_sensor()):
+            #     self._printer.pause_print()
 
-        if event is Events.TOOL_CHANGE:
-            self.active_tool = int(payload["new"])
-            self.send_status_to_hmi()
+        # if event is Events.TOOL_CHANGE:
+        #     self.active_tool = int(payload["new"])
+        #     self.send_status_to_hmi()
 
         if event in (Events.PRINT_DONE, Events.PRINT_CANCELLED,Events.PRINT_FAILED):
             # unlock Door:
@@ -339,46 +338,46 @@ class TwinDragon600x600ServicesPlugin(octoprint.plugin.StartupPlugin,
             self.log_info("Door Unlocked")
 
 
-    def callback_extruder0(self, _):
-        sleep(self.bounce_extruder1 / 1000)  # Debounce
+    # def callback_extruder0(self, _):
+    #     sleep(self.bounce_extruder1 / 1000)  # Debounce
 
-        if not self.outage_extruder0():
-            return self.popup_success("Filament inserted in extruder 0!")
+    #     if not self.outage_extruder0():
+    #         return self.popup_success("Filament inserted in extruder 0!")
 
-        self.send_status_to_hmi()
-        self.popup_error("Filament outage on extruder 0!")  # Debounce
+    #     self.send_status_to_hmi()
+    #     self.popup_error("Filament outage on extruder 0!")  # Debounce
 
-        if self.has_extruder1() and self.active_tool != 0:
-            return
+    #     if self.has_extruder1() and self.active_tool != 0:
+    #         return
 
-        if self.pause_print:
-            self._printer.pause_print()
-        if self.gcode_extruder0:
-            self._printer.commands(self.gcode_extruder0)
+    #     if self.pause_print:
+    #         self._printer.pause_print()
+    #     if self.gcode_extruder0:
+    #         self._printer.commands(self.gcode_extruder0)
 
-    def callback_extruder1(self, _):
-        if not self.has_extruder1():
-            return
+    # def callback_extruder1(self, _):
+    #     if not self.has_extruder1():
+    #         return
 
-        sleep(self.bounce_extruder1 / 1000)
+        # sleep(self.bounce_extruder1 / 1000)
 
-        if not self.outage_extruder1():
-            return self.popup_success("Filament inserted in extruder 1!")
+        # if not self.outage_extruder1():
+        #     return self.popup_success("Filament inserted in extruder 1!")
 
-        self.send_status_to_hmi()
-        self.popup_error("Filament outage on extruder 1!")
+        # self.send_status_to_hmi()
+        # self.popup_error("Filament outage on extruder 1!")
 
-        if self.active_tool != 1:
-            return
+        # if self.active_tool != 1:
+        #     return
 
-        if self.pause_print:
-            self._printer.pause_print()
+        # if self.pause_print:
+        #     self._printer.pause_print()
 
-        if self.gcode_extruder1:
-            self._printer.commands(self.gcode_extruder1)
+        # if self.gcode_extruder1:
+        #     self._printer.commands(self.gcode_extruder1)
 
     def callback_door_sensor(self, _):
-        sleep(self.bounce_door_sesnor / 1000)
+        sleep(self.bounce_door_sensor / 1000)
 
         if not self.outage_door_sensor():
             return self.popup_success("Door closed!")
@@ -440,44 +439,44 @@ class TwinDragon600x600ServicesPlugin(octoprint.plugin.StartupPlugin,
         return dict(
             sensor_enabled=True,           # global sensing state
 
-            enabled_extruder0=False,        # Default disabled
-            bounce_extruder0=250,           # Debounce 250ms
-            contact_extruder0=0,            # Normally Open
-            gcode_extruder0=None,
+            # enabled_extruder0=False,        # Default disabled
+            # bounce_extruder0=250,           # Debounce 250ms
+            # contact_extruder0=0,            # Normally Open
+            # gcode_extruder0=None,
 
-            enabled_extruder1=False,        # Default is disabled
-            bounce_extruder1=250,           # Debounce 250ms
-            contact_extruder1=0,            # Normally Open
-            gcode_extruder1=None,
+            # enabled_extruder1=False,        # Default is disabled
+            # bounce_extruder1=250,           # Debounce 250ms
+            # contact_extruder1=0,            # Normally Open
+            # gcode_extruder1=None,
 
             enabled_door_sensor=False,                # Default is disabled
             bounce_door_sensor=250,                # Debounce 250ms
             contact_door_sensor=0,                 # Normally Open
             gcode_door_sensor=None,
 
-            pause_print=True,               # pause on outage
+            # pause_print=True,               # pause on outage
         )
 
-    def on_settings_migrate(self, target, current=None):
-        self._logger.warn(
-            "######### current settings version %s target settings version %s #########", current, target)
-        if (current is None or current < 2) and target == 2:
-            if self._settings.has(["pin"]):
-                self._settings.set_boolean(["enabled_extruder0"], self._settings.get_int(["pin"]) != -1)
-            if self._settings.has(["bounce"]):
-                self._settings.set_int(["bounce_extruder0"], self._settings.get_int(["bounce"]))
-            if self._settings.has(["switch"]):
-                self._settings.set_int(["contact_extruder0"], self._settings.get_int(["switch"]))
-            if self._settings.has(["gcode_pin"]) and self._settings.get(["gcode_pin"]) is not None:
-                self._settings.set(["gcode_extruder0"], str(self._settings.get(["gcode_pin"])).replace("\n", ";"))
-            if self._settings.has(["pin2"]):
-                self._settings.set_boolean(["enabled_extruder0"], self._settings.get_int(["pin2"]) != -1)
-            if self._settings.has(["bounce2"]):
-                self._settings.set_int(["bounce_extruder0"], self._settings.get_int(["bounce2"]))
-            if self._settings.has(["switch2"]):
-                self._settings.set_int(["contact_extruder0"], self._settings.get_int(["switch2"]))
-            if self._settings.has(["gcode_pin2"]) and self._settings.get(["gcode_pin2"]) is not None:
-                self._settings.set(["gcode_extruder0"], str(self._settings.get(["gcode_pin2"])).replace("\n", ";"))
+    # def on_settings_migrate(self, target, current=None):
+    #     self._logger.warn(
+    #         "######### current settings version %s target settings version %s #########", current, target)
+    #     if (current is None or current < 2) and target == 2:
+    #         if self._settings.has(["pin"]):
+    #             self._settings.set_boolean(["enabled_extruder0"], self._settings.get_int(["pin"]) != -1)
+    #         if self._settings.has(["bounce"]):
+    #             self._settings.set_int(["bounce_extruder0"], self._settings.get_int(["bounce"]))
+    #         if self._settings.has(["switch"]):
+    #             self._settings.set_int(["contact_extruder0"], self._settings.get_int(["switch"]))
+    #         if self._settings.has(["gcode_pin"]) and self._settings.get(["gcode_pin"]) is not None:
+    #             self._settings.set(["gcode_extruder0"], str(self._settings.get(["gcode_pin"])).replace("\n", ";"))
+    #         if self._settings.has(["pin2"]):
+    #             self._settings.set_boolean(["enabled_extruder0"], self._settings.get_int(["pin2"]) != -1)
+    #         if self._settings.has(["bounce2"]):
+    #             self._settings.set_int(["bounce_extruder0"], self._settings.get_int(["bounce2"]))
+    #         if self._settings.has(["switch2"]):
+    #             self._settings.set_int(["contact_extruder0"], self._settings.get_int(["switch2"]))
+    #         if self._settings.has(["gcode_pin2"]) and self._settings.get(["gcode_pin2"]) is not None:
+    #             self._settings.set(["gcode_extruder0"], str(self._settings.get(["gcode_pin2"])).replace("\n", ";"))
 
     def on_settings_save(self, data):
         try:

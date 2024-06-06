@@ -117,9 +117,9 @@ $(function() {
             //     self.hasExtruder1(false);
             // }
 
-            // self.Config.sensor_enabled.subscribe(function(value) {
-            //     self.sensorEnabled(value == 1);
-            // });
+            self.Config.sensor_enabled.subscribe(function(value) {
+                self.sensorEnabled(value == 1);
+            });
             // self.Config.enabled_extruder0.subscribe(function(value) {
             //     self.showExtruder0(value == 1);
             // });
@@ -145,7 +145,7 @@ $(function() {
             // }
             // self.hasExtruder1(self.VM_printerProfiles.currentProfileData.extruder.count == 2);
 
-            // self.sensorEnabled(self.Config.sensor_enabled() == 1);
+            self.sensorEnabled(self.Config.sensor_enabled() == 1);
             // self.showExtruder0(self.Config.enabled_extruder0() == 1);
             // self.showExtruder1(self.hasExtruder1() && self.Config.enabled_extruder1() == 1);
             self.showSensor(self.Config.enabled_door_sensor() == 1);
@@ -170,10 +170,10 @@ $(function() {
                     //     msg += "<b>Extruder 1:</b> " + status_text_extruder(data['extruder1']) + "<br/>";
                     if (data['door_sensor'] != -1)
                         msg += "<b>Door Sensor:</b> " + status_text_door_sensor(data['door_sensor']);
-                } //else {
-                //     msg = "<b>Sensing disabled!</b>"
-                //     type = "warning"
-                // }
+                } else {
+                    msg = "<b>Sensing disabled!</b>"
+                    type = "warning"
+                }
             }
 
             // self.showPopup(data.msg, data.msgType, (data && data.hasOwnProperty('hide') ? data.hide : true));
